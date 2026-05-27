@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIST AI Scalability Roadmap</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #65708a;
+      --line: #d9deea;
+      --tech: #2563eb;
+      --org: #7c3aed;
+      --mixed: #0f766e;
+      --p0: #dc2626;
+      --p1: #f59e0b;
+      --p2: #16a34a;
+      --shadow: 0 18px 45px rgba(23, 32, 51, 0.10);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 28%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 44px 56px 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      max-width: 1000px;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 22px;
+      padding: 0 56px 56px;
+      align-items: start;
+    }
+
+    .main,
+    .side {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(217, 222, 234, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .main {
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .side {
+      position: sticky;
+      top: 18px;
+      padding: 22px;
+      min-height: 520px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    select,
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #94a3b8;
+      box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.18);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.tech { background: var(--tech); }
+    .dot.org { background: var(--org); }
+    .dot.mixed { background: var(--mixed); }
+    .dot.p0 { background: var(--p0); }
+    .dot.p1 { background: var(--p1); }
+    .dot.p2 { background: var(--p2); }
+
+    .roadmap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 170px repeat(3, minmax(230px, 1fr));
+      gap: 18px;
+      min-height: 700px;
+    }
+
+    .phase-header {
+      padding: 15px 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      min-height: 86px;
+    }
+
+    .phase-header h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .phase-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .lane-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+      border-radius: 20px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      background: rgba(248, 250, 252, 0.55);
+    }
+
+    .phase-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 250px;
+    }
+
+    .card {
+      position: relative;
+      padding: 15px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, opacity 160ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(23, 32, 51, 0.13);
+    }
+
+    .card.active {
+      border-color: #111827;
+      box-shadow: 0 14px 32px rgba(23, 32, 51, 0.16);
+    }
+
+    .card.hidden {
+      display: none;
+    }
+
+    .card.dimmed {
+      opacity: 0.38;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      border-radius: 18px 0 0 18px;
+      background: var(--mixed);
+    }
+
+    .card.tech::before { background: var(--tech); }
+    .card.org::before { background: var(--org); }
+    .card.mixed::before { background: var(--mixed); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #f1f5f9;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .tag.p0 { background: rgba(220, 38, 38, 0.10); color: var(--p0); }
+    .tag.p1 { background: rgba(245, 158, 11, 0.14); color: #b45309; }
+    .tag.p2 { background: rgba(22, 163, 74, 0.11); color: var(--p2); }
+
+    .card h4 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.25;
+      letter-spacing: -0.018em;
+    }
+
+    .card p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.38;
+    }
+
+    .depends {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .mini {
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    .connector-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .roadmap > *:not(.connector-layer) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .side-empty {
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 8px;
+    }
+
+    .side h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: -0.035em;
+    }
+
+    .side-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 18px;
+    }
+
+    .side-section {
+      margin-top: 22px;
+    }
+
+    .side-section h3 {
+      margin: 0 0 9px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .side-section p,
+    .side-section li {
+      color: #38445a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .action-list li {
+      margin-bottom: 7px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .count {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .side {
+        position: static;
+      }
+      .filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 840px) {
+      header,
+      .layout {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .roadmap {
+        grid-template-columns: 1fr;
+      }
+      .lane-label {
+        writing-mode: horizontal-tb;
+        transform: none;
+        min-height: unset;
+        padding: 12px;
+      }
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">UIC AIST · Scalability & Transferability · Draft interactive deliverable</div>
+    <h1>AI Scalability Roadmap for Railway Infrastructure Managers</h1>
+    <p class="subtitle">
+      An interactive pathway connecting technical and organisational blockers, enablers, priorities and dependencies — from problem framing and data foundations to production-grade AI operations.
+    </p>
+  </header>
+
+  <div class="layout">
+    <main class="main">
+      <section class="filters" aria-label="Filters">
+        <div>
+          <label for="audienceFilter">Audience</label>
+          <select id="audienceFilter"></select>
+        </div>
+        <div>
+          <label for="typeFilter">Dimension</label>
+          <select id="typeFilter"></select>
+        </div>
+        <div>
+          <label for="phaseFilter">Phase</label>
+          <select id="phaseFilter"></select>
+        </div>
+        <div>
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="search" placeholder="data, governance, MLOps..." />
+        </div>
+      </section>
+
+      <section class="legend">
+        <span class="pill"><span class="dot org"></span>Organisational</span>
+        <span class="pill"><span class="dot tech"></span>Technical</span>
+        <span class="pill"><span class="dot mixed"></span>Cross-cutting</span>
+        <span class="pill"><span class="dot p0"></span>P0 Foundation</span>
+        <span class="pill"><span class="dot p1"></span>P1 Scaling readiness</span>
+        <span class="pill"><span class="dot p2"></span>P2 Optimisation</span>
+        <span class="count" id="resultCount"></span>
+      </section>
+
+      <section class="roadmap" id="roadmap">
+        <svg class="connector-layer" id="connectorLayer"></svg>
+
+        <div></div>
+        <div class="phase-header">
+          <h3>P0 · Foundations</h3>
+          <p>Must be addressed first. Without these, scaling initiatives cannot reliably start or progress.</p>
+        </div>
+        <div class="phase-header">
+          <h3>P1 · Scaling readiness</h3>
+          <p>Develop in parallel once foundations are underway. Converts pilots into scalable capability.</p>
+        </div>
+        <div class="phase-header">
+          <h3>P2 · Optimisation</h3>
+          <p>Improves coherence, predictability and long-term sustainability once scaling is active.</p>
+        </div>
+
+        <div class="lane-label">Organisational path</div>
+        <div class="phase-col" data-lane="org" data-phase="P0"></div>
+        <div class="phase-col" data-lane="org" data-phase="P1"></div>
+        <div class="phase-col" data-lane="org" data-phase="P2"></div>
+
+        <div class="lane-label">Technical path</div>
+        <div class="phase-col" data-lane="tech" data-phase="P0"></div>
+        <div class="phase-col" data-lane="tech" data-phase="P1"></div>
+        <div class="phase-col" data-lane="tech" data-phase="P2"></div>
+      </section>
+
+      <div class="footer-note">
+        Draft logic: the roadmap is organised by dependency priority, not strict chronology. P0 items should be clarified early; P1 items can progress in parallel; P2 items mature the scaling system.
+      </div>
+    </main>
+
+    <aside class="side" id="detailsPanel">
+      <h2>Select a blocker</h2>
+      <p class="side-empty">
+        Click any card to inspect the blocker, why it matters, its enablers, dependencies and stakeholder relevance.
+      </p>
+    </aside>
+  </div>
+
+  <script>
+    const items = [
+      {
+        id: "problem-definition",
+        title: "Clear problem definition",
+        type: "org",
+        lane: "org",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Executive", "Asset management", "Maintenance / operations", "IT / data platform", "Data science / AI teams"],
+        summary: "AI initiatives start from vague goals or technology push, causing misalignment and weak ownership.",
+        why: "Scaling depends on knowing what decision, process or operational pain point the AI solution is meant to improve. Without a clear problem, value, ownership and readiness cannot be assessed.",
+        enablers: [
+          "Use a mandatory Problem Framing Canvas before PoC approval.",
+          "Require business and IT/data co-sponsorship.",
+          "Define success criteria, operational decision owner and intended scale from the start.",
+          "Hold cross-functional framing workshops with operational managers."
+        ],
+        dependsOn: [],
+        enables: ["business-case", "scale-definition", "adoption-trust"]
+      },
+      {
+        id: "vision-governance",
+        title: "Vision, governance & decision authority",
+        type: "org",
+        lane: "org",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Executive", "Legal / safety / compliance", "IT / data platform", "Asset management"],
+        summary: "A weak vision and unclear governance slow decisions, investment and adoption.",
+        why: "AI scaling requires repeated decisions under uncertainty. Without visible sponsorship, delegated authority and stage-gate logic, pilots are repeatedly reopened or stall before production.",
+        enablers: [
+          "Create an empowered AI Council or Steering Committee.",
+          "Use time-boxed decisions: decide, delegate or stop.",
+          "Translate the AI vision into function-specific operational changes.",
+          "Define clear RACI models for scaling decisions."
+        ],
+        dependsOn: [],
+        enables: ["ownership", "shared-foundations", "legal-safety", "portfolio-funding"]
+      },
+      {
+        id: "ownership",
+        title: "Business ownership & benefit accountability",
+        type: "org",
+        lane: "org",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Executive", "Asset management", "Maintenance / operations"],
+        summary: "No clear owner beyond prototype phase means value realisation collapses post-pilot.",
+        why: "A scalable AI product needs someone accountable not only for delivery, but for validating and realising benefits in daily operations.",
+        enablers: [
+          "Assign a business owner and technical owner for each initiative.",
+          "Make benefit ownership explicit in the governance model.",
+          "Create cross-functional product teams for promising initiatives.",
+          "Define who owns the AI product in steady state."
+        ],
+        dependsOn: ["vision-governance"],
+        enables: ["production-run-model", "workflow-feedback"]
+      },
+      {
+        id: "shared-foundations",
+        title: "Shared data & platform foundations",
+        type: "mixed",
+        lane: "org",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Executive", "IT / data platform", "Data science / AI teams", "Systems engineering"],
+        summary: "Data, platform and integration capabilities are often treated as project costs instead of shared foundations.",
+        why: "Individual use cases cannot each carry the full cost of data platforms, integrations, shared tooling and governance. Portfolio-level scale requires reusable foundations.",
+        enablers: [
+          "Fund shared platforms as strategic capabilities, not isolated use-case expenses.",
+          "Define enterprise-wide data integration strategy.",
+          "Create governance roles such as data stewards.",
+          "Prioritise reuse and portfolio-level capability."
+        ],
+        dependsOn: ["vision-governance"],
+        enables: ["data-availability", "data-quality", "data-architecture", "platform-architecture"]
+      },
+      {
+        id: "legal-safety",
+        title: "Legal, safety & compliance capability",
+        type: "org",
+        lane: "org",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Legal / safety / compliance", "Executive", "Systems engineering"],
+        summary: "Regulatory uncertainty and safety assurance gaps increase perceived risk and late rework.",
+        why: "In mission-critical railway contexts, production and large-scale deployment require early interpretation of legal, compliance and safety constraints.",
+        enablers: [
+          "Involve legal and safety experts from ideation.",
+          "Develop an internal AI regulatory playbook.",
+          "Identify applicable standards and certification needs early.",
+          "Build Safety Cases progressively, not only at the end."
+        ],
+        dependsOn: ["vision-governance"],
+        enables: ["phase-gates", "explainability"]
+      },
+      {
+        id: "data-availability",
+        title: "Data collection, storage & usable availability",
+        type: "tech",
+        lane: "tech",
+        phase: "P0",
+        priority: "P0",
+        audience: ["IT / data platform", "Data science / AI teams", "Systems engineering", "Maintenance / operations"],
+        summary: "The right data may not be collected, retained, formatted or available at the speed needed for AI.",
+        why: "No data means no scalable AI. The problem is not only whether data exists, but whether it can realistically support analysis and operational use.",
+        enablers: [
+          "Define data delivery guidelines for AI use cases.",
+          "Implement near-real-time pipelines where operationally needed.",
+          "Create central registries for data sources.",
+          "Adapt data retention policies to AI needs."
+        ],
+        dependsOn: ["shared-foundations"],
+        enables: ["data-quality", "performance-scale", "monitoring-retraining"]
+      },
+      {
+        id: "data-quality",
+        title: "Data quality, consistency & semantic structure",
+        type: "tech",
+        lane: "tech",
+        phase: "P0",
+        priority: "P0",
+        audience: ["Asset management", "IT / data platform", "Data science / AI teams", "Systems engineering"],
+        summary: "Inconsistent asset, sensor and operational data undermines trust, integration and model scalability.",
+        why: "AI needs consistent meaning across asset systems, detections, work orders and sensor streams. Poor semantic coherence makes outputs hard to trust and reuse.",
+        enablers: [
+          "Implement common semantic layers and canonical models.",
+          "Separate enterprise data quality from sensor/input data quality.",
+          "Use automated data quality controls.",
+          "Define fitness-for-purpose rules for AI datasets."
+        ],
+        dependsOn: ["data-availability", "shared-foundations"],
+        enables: ["performance-scale", "explainability", "workflow-feedback"]
+      },
+      {
+        id: "data-architecture",
+        title: "Data architecture, access & controls",
+        type: "tech",
+        lane: "tech",
+        phase: "P0",
+        priority: "P0",
+        audience: ["IT / data platform", "Systems engineering", "Legal / safety / compliance", "Data science / AI teams"],
+        summary: "Organisations may own data but lack APIs, permissions or pathways to retrieve it for AI use.",
+        why: "Controlled and usable data movement is a prerequisite for AI scaling. Access controls must support governance without blocking reuse.",
+        enablers: [
+          "Standardise APIs and interfaces for critical data sources.",
+          "Clarify the relationship between data ownership and technical access.",
+          "Align permissions with governance decisions.",
+          "Make access mechanisms transparent and reusable."
+        ],
+        dependsOn: ["shared-foundations", "vision-governance"],
+        enables: ["enterprise-integration", "ot-integration", "platform-architecture"]
+      },
+      {
+        id: "business-case",
+        title: "AI-specific business case & risk framing",
+        type: "org",
+        lane: "org",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Executive", "Asset management", "Maintenance / operations"],
+        summary: "Traditional deterministic business cases may not fit AI uncertainty and shared foundation costs.",
+        why: "Scaling needs credible value logic, including uncertainty, risk of inaction, shared platform costs and multi-year investment.",
+        enablers: [
+          "Use portfolio logic so one use case does not carry all shared costs.",
+          "Assess benefits using multi-dimensional and risk-adjusted criteria.",
+          "Include the risk of inaction.",
+          "Align investment with readiness levels and stage gates."
+        ],
+        dependsOn: ["problem-definition"],
+        enables: ["portfolio-funding", "phase-gates"]
+      },
+      {
+        id: "portfolio-funding",
+        title: "Portfolio prioritisation & agile funding",
+        type: "org",
+        lane: "org",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Executive", "IT / data platform", "Data science / AI teams"],
+        summary: "Competing priorities and fixed funding models fragment AI efforts and limit scaling under uncertainty.",
+        why: "AI portfolios need the ability to pivot effort across use cases as evidence, value and readiness evolve.",
+        enablers: [
+          "Adopt portfolio-based prioritisation using common criteria.",
+          "Create multi-year funding mechanisms for scaling.",
+          "Allow AI teams to pivot across use cases.",
+          "Align IT and business incentives with shared KPIs."
+        ],
+        dependsOn: ["vision-governance", "business-case"],
+        enables: ["skills-adoption", "production-run-model"]
+      },
+      {
+        id: "skills-adoption",
+        title: "Skills, adoption & change management",
+        type: "org",
+        lane: "org",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Executive", "Maintenance / operations", "Asset management", "Data science / AI teams"],
+        summary: "Skills gaps, low trust and organisational inertia prevent solutions from becoming daily practice.",
+        why: "AI value materialises only when users understand, trust and adopt the solution inside real workflows.",
+        enablers: [
+          "Differentiate AI literacy for users, makers and decision makers.",
+          "Involve end users from early pilot phases.",
+          "Collect testimonials, frontline feedback and small wins.",
+          "Embed benefits into existing tools rather than standalone dashboards."
+        ],
+        dependsOn: ["vision-governance", "business-case"],
+        enables: ["workflow-feedback", "explainability"]
+      },
+      {
+        id: "production-run-model",
+        title: "Production operating model: run, support & funding",
+        type: "mixed",
+        lane: "org",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Executive", "IT / data platform", "Data science / AI teams", "Asset management"],
+        summary: "A solution can go live technically but fail because no run model, O&M funding or owner exists.",
+        why: "Production requires monitoring, incident handling, model updates, funding and handover responsibilities before go-live.",
+        enablers: [
+          "Define a minimum viable run model before go-live.",
+          "Plan O&M funding for the production phase.",
+          "Clarify handover to SAP, Maximo, GIS or other operational systems.",
+          "Create MLOps or equivalent support capability."
+        ],
+        dependsOn: ["ownership", "portfolio-funding"],
+        enables: ["poc-production", "monitoring-retraining"]
+      },
+      {
+        id: "platform-architecture",
+        title: "Platform architecture & IT maturity",
+        type: "tech",
+        lane: "tech",
+        phase: "P1",
+        priority: "P1",
+        audience: ["IT / data platform", "Executive", "Systems engineering", "Data science / AI teams"],
+        summary: "Fragmented, immature or constantly changing IT environments turn each AI initiative into a separate exercise.",
+        why: "Scalable AI needs coherent infrastructure, standardised tools, platformisation and central management.",
+        enablers: [
+          "Consolidate platforms and standardise tooling.",
+          "Introduce central management and governance for AI platforms.",
+          "Define platform patterns for ingesting and serving data.",
+          "Avoid rebuilding infrastructure for each use case."
+        ],
+        dependsOn: ["data-architecture", "shared-foundations"],
+        enables: ["compute-stack", "poc-production"]
+      },
+      {
+        id: "compute-stack",
+        title: "Compute environment, software stack & vendor dependencies",
+        type: "tech",
+        lane: "tech",
+        phase: "P1",
+        priority: "P1",
+        audience: ["IT / data platform", "Systems engineering", "Procurement / vendor management", "Data science / AI teams"],
+        summary: "Cloud, edge, hardware, tooling and vendor choices can constrain portability and long-term support.",
+        why: "AI solutions must run where the operational need requires: cloud, edge or hybrid. Early choices can create lock-in or unsustainable support needs.",
+        enablers: [
+          "Define cloud/edge deployment strategy by use case latency and operational need.",
+          "Use modular software stacks and open standards where possible.",
+          "Involve procurement early for vendor dependency management.",
+          "Standardise deployment patterns for portability."
+        ],
+        dependsOn: ["platform-architecture"],
+        enables: ["poc-production", "monitoring-retraining"]
+      },
+      {
+        id: "enterprise-integration",
+        title: "Enterprise, asset management & OT integration",
+        type: "tech",
+        lane: "tech",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Systems engineering", "IT / data platform", "Asset management", "Maintenance / operations"],
+        summary: "AI outputs must connect with SAP, Maximo, GIS, monitoring centres, OT systems and railway procedures.",
+        why: "AI does not scale if it remains separate from the systems that manage assets, work, maintenance and operations.",
+        enablers: [
+          "Treat integration as a core architectural component.",
+          "Use standard APIs and robust interfaces.",
+          "Include integration requirements in contracts.",
+          "Define alarm procedures and reliability requirements for operational systems."
+        ],
+        dependsOn: ["data-architecture", "platform-architecture"],
+        enables: ["workflow-feedback", "poc-production"]
+      },
+      {
+        id: "workflow-feedback",
+        title: "Maintenance workflows & operator feedback loops",
+        type: "mixed",
+        lane: "tech",
+        phase: "P1",
+        priority: "P1",
+        audience: ["Maintenance / operations", "Asset management", "Systems engineering", "Data science / AI teams"],
+        summary: "AI outputs must fit into review, planning, execution, recording and learning workflows.",
+        why: "A detection or prediction has limited value unless it becomes an operational action and generates feedback for improvement.",
+        enablers: [
+          "Link AI outputs to work orders and asset records.",
+          "Capture operator feedback in structured form.",
+          "Integrate reliability-centred maintenance analysis.",
+          "Use feedback as machine-usable signals for model evolution."
+        ],
+        dependsOn: ["ownership", "enterprise-integration", "skills-adoption"],
+        enables: ["monitoring-retraining", "explainability"]
+      },
+      {
+        id: "phase-gates",
+        title: "Readiness models & phase-gate discipline",
+        type: "org",
+        lane: "org",
+        phase: "P2",
+        priority: "P2",
+        audience: ["Executive", "IT / data platform", "Legal / safety / compliance", "Data science / AI teams"],
+        summary: "Projects stall between PoC and product when maturity language and transition criteria are unclear.",
+        why: "Scaling benefits from common readiness levels, stage-gate checklists and explicit transition criteria across technical, operational, legal and organisational dimensions.",
+        enablers: [
+          "Define common readiness or maturity model.",
+          "Formalise an intermediate Prototype stage between PoC and Product.",
+          "Use technical, operational, legal and benefit criteria in gates.",
+          "Link phase approval to portfolio and budget allocation."
+        ],
+        dependsOn: ["business-case", "legal-safety"],
+        enables: ["poc-production"]
+      },
+      {
+        id: "scale-definition",
+        title: "Scale dimensions, metrics & narrative evidence",
+        type: "org",
+        lane: "org",
+        phase: "P2",
+        priority: "P2",
+        audience: ["Executive", "Asset management", "Maintenance / operations", "Data science / AI teams"],
+        summary: "Ambiguity about what scaling means prevents consistent evaluation and communication.",
+        why: "Scaling can mean more assets, more users, more decisions, more geographies, more data, or deeper workflow integration. Each needs different evidence.",
+        enablers: [
+          "Define scale objectives for each initiative.",
+          "Track scale-related metrics as part of monitoring.",
+          "Use operational evidence and testimonials to build credibility.",
+          "Benchmark progress across comparable initiatives."
+        ],
+        dependsOn: ["problem-definition", "skills-adoption"],
+        enables: ["phase-gates"]
+      },
+      {
+        id: "poc-production",
+        title: "PoC-to-production technical pipeline",
+        type: "tech",
+        lane: "tech",
+        phase: "P2",
+        priority: "P2",
+        audience: ["IT / data platform", "Data science / AI teams", "Systems engineering", "Executive"],
+        summary: "A model that works once is not yet operational. Production needs stability, repeatability and lifecycle tooling.",
+        why: "Scaling requires a defined route from experimentation to controlled deployment, with shared expectations on telemetry, CI/CD, testing and run responsibility.",
+        enablers: [
+          "Define production deployment steps and acceptance criteria.",
+          "Use standardised CI/CD, logging and telemetry.",
+          "Document data dependencies and compute requirements.",
+          "Agree run responsibility before production approval."
+        ],
+        dependsOn: ["production-run-model", "platform-architecture", "compute-stack", "phase-gates"],
+        enables: ["monitoring-retraining", "performance-scale"]
+      },
+      {
+        id: "monitoring-retraining",
+        title: "Monitoring, retraining & model evolution",
+        type: "tech",
+        lane: "tech",
+        phase: "P2",
+        priority: "P2",
+        audience: ["Data science / AI teams", "IT / data platform", "Maintenance / operations", "Systems engineering"],
+        summary: "Models degrade, drift and evolve after deployment; scaling needs controlled maintenance and update mechanisms.",
+        why: "Without monitoring and retraining logic, AI systems can continue operating after quality drops or conditions change.",
+        enablers: [
+          "Monitor production performance and data drift.",
+          "Use golden evaluation datasets.",
+          "Mirror production logging during PoC phases.",
+          "Define lifecycle cadence for retraining, updates and incident response."
+        ],
+        dependsOn: ["poc-production", "workflow-feedback", "production-run-model"],
+        enables: ["performance-scale"]
+      },
+      {
+        id: "performance-scale",
+        title: "Performance, accuracy & trust at scale",
+        type: "tech",
+        lane: "tech",
+        phase: "P2",
+        priority: "P2",
+        audience: ["Data science / AI teams", "Maintenance / operations", "Asset management", "Systems engineering"],
+        summary: "Model performance may degrade when moving from controlled tests to larger, more variable operational settings.",
+        why: "Scaling requires maintaining sufficient quality under real-world variability and managing trade-offs between missed detections, false positives, cost and trust.",
+        enablers: [
+          "Define maximum allowed performance gap between PoC and deployment.",
+          "Stress test against operational data and realistic volumes.",
+          "Monitor false positives, missed detections and operational impact.",
+          "Use telemetry and quality gates to preserve trust."
+        ],
+        dependsOn: ["data-quality", "monitoring-retraining", "poc-production"],
+        enables: ["explainability"]
+      },
+      {
+        id: "explainability",
+        title: "Explainability, interpretability & field trust",
+        type: "mixed",
+        lane: "tech",
+        phase: "P2",
+        priority: "P2",
+        audience: ["Maintenance / operations", "Asset management", "Legal / safety / compliance", "Data science / AI teams"],
+        summary: "Users need to understand, challenge and trust AI outputs before acting on them in real operations.",
+        why: "Technically strong models may fail to scale if outputs cannot be related to field knowledge, confidence, uncertainty and operational judgment.",
+        enablers: [
+          "Define explainability requirements by audience.",
+          "Document model logic, limitations and confidence indicators.",
+          "Log user interactions and periodically review them.",
+          "Connect explanations to operational context and field experience."
+        ],
+        dependsOn: ["performance-scale", "skills-adoption", "legal-safety"],
+        enables: []
+      }
+    ];
+
+    const audienceOptions = ["All", "Executive", "Asset management", "Maintenance / operations", "Systems engineering", "IT / data platform", "Data science / AI teams", "Legal / safety / compliance", "Procurement / vendor management"];
+    const typeOptions = ["All", "Organisational", "Technical", "Cross-cutting"];
+    const phaseOptions = ["All", "P0", "P1", "P2"];
+
+    const roadmap = document.getElementById("roadmap");
+    const connectorLayer = document.getElementById("connectorLayer");
+    const detailsPanel = document.getElementById("detailsPanel");
+    const audienceFilter = document.getElementById("audienceFilter");
+    const typeFilter = document.getElementById("typeFilter");
+    const phaseFilter = document.getElementById("phaseFilter");
+    const searchInput = document.getElementById("searchInput");
+    const resultCount = document.getElementById("resultCount");
+
+    let selectedId = null;
+
+    function fillSelect(select, options) {
+      select.innerHTML = options.map(option => `<option value="${option}">${option}</option>`).join("");
+    }
+
+    fillSelect(audienceFilter, audienceOptions);
+    fillSelect(typeFilter, typeOptions);
+    fillSelect(phaseFilter, phaseOptions);
+
+    function typeLabel(type) {
+      return {
+        org: "Organisational",
+        tech: "Technical",
+        mixed: "Cross-cutting"
+      }[type];
+    }
+
+    function typeFromLabel(label) {
+      return {
+        "Organisational": "org",
+        "Technical": "tech",
+        "Cross-cutting": "mixed"
+      }[label];
+    }
+
+    function renderCards() {
+      document.querySelectorAll(".phase-col").forEach(col => col.innerHTML = "");
+
+      items.forEach(item => {
+        const col = document.querySelector(`.phase-col[data-lane="${item.lane}"][data-phase="${item.phase}"]`);
+        const card = document.createElement("article");
+        card.className = `card ${item.type}`;
+        card.id = `card-${item.id}`;
+        card.dataset.id = item.id;
+        card.dataset.type = item.type;
+        card.dataset.phase = item.phase;
+        card.dataset.audience = item.audience.join("|");
+        card.dataset.search = [item.title, item.summary, item.why, item.enablers.join(" "), item.audience.join(" ")].join(" ").toLowerCase();
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="tag ${item.priority.toLowerCase()}">${item.priority}</span>
+            <span class="tag">${typeLabel(item.type)}</span>
+          </div>
+          <h4>${item.title}</h4>
+          <p>${item.summary}</p>
+          ${item.dependsOn.length ? `<div class="depends">${item.dependsOn.slice(0, 3).map(dep => `<span class="mini">depends</span>`).join("")}</div>` : ""}
+        `;
+        card.addEventListener("click", () => selectItem(item.id));
+        col.appendChild(card);
+      });
+    }
+
+    function itemVisible(item) {
+      const audience = audienceFilter.value;
+      const type = typeFilter.value;
+      const phase = phaseFilter.value;
+      const query = searchInput.value.trim().toLowerCase();
+
+      const matchesAudience = audience === "All" || item.audience.includes(audience);
+      const matchesType = type === "All" || item.type === typeFromLabel(type);
+      const matchesPhase = phase === "All" || item.phase === phase;
+      const matchesQuery = !query || [item.title, item.summary, item.why, item.enablers.join(" "), item.audience.join(" ")].join(" ").toLowerCase().includes(query);
+
+      return matchesAudience && matchesType && matchesPhase && matchesQuery;
+    }
+
+    function applyFilters() {
+      let visible = 0;
+      items.forEach(item => {
+        const card = document.getElementById(`card-${item.id}`);
+        const isVisible = itemVisible(item);
+        card.classList.toggle("hidden", !isVisible);
+        if (isVisible) visible++;
+      });
+      resultCount.textContent = `${visible} of ${items.length} cards shown`;
+      drawConnectors();
+    }
+
+    function selectItem(id) {
+      selectedId = id;
+      document.querySelectorAll(".card").forEach(card => card.classList.remove("active", "dimmed"));
+      const item = items.find(x => x.id === id);
+      const relatedIds = new Set([id, ...item.dependsOn, ...item.enables]);
+
+      items.forEach(candidate => {
+        const card = document.getElementById(`card-${candidate.id}`);
+        if (candidate.id === id) card.classList.add("active");
+        if (!relatedIds.has(candidate.id)) card.classList.add("dimmed");
+      });
+
+      renderDetails(item);
+      drawConnectors();
+    }
+
+    function renderDetails(item) {
+      const dependencyNames = item.dependsOn.map(id => items.find(x => x.id === id)?.title).filter(Boolean);
+      const enablesNames = item.enables.map(id => items.find(x => x.id === id)?.title).filter(Boolean);
+      detailsPanel.innerHTML = `
+        <h2>${item.title}</h2>
+        <div class="side-meta">
+          <span class="tag ${item.priority.toLowerCase()}">${item.priority}</span>
+          <span class="tag">${typeLabel(item.type)}</span>
+          <span class="tag">${item.phase}</span>
+        </div>
+
+        <div class="side-section">
+          <h3>Blocker</h3>
+          <p>${item.summary}</p>
+        </div>
+
+        <div class="side-section">
+          <h3>Why it matters</h3>
+          <p>${item.why}</p>
+        </div>
+
+        <div class="side-section">
+          <h3>Recommended enablers</h3>
+          <ul class="action-list">
+            ${item.enablers.map(x => `<li>${x}</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="side-section">
+          <h3>Relevant stakeholders</h3>
+          <p>${item.audience.join(" · ")}</p>
+        </div>
+
+        <div class="side-section">
+          <h3>Dependencies</h3>
+          <p>${dependencyNames.length ? dependencyNames.join(" → ") : "No upstream dependency defined in this prototype."}</p>
+        </div>
+
+        <div class="side-section">
+          <h3>Enables</h3>
+          <p>${enablesNames.length ? enablesNames.join(" · ") : "End-state / maturity outcome."}</p>
+        </div>
+      `;
+    }
+
+    function drawConnectors() {
+      connectorLayer.innerHTML = "";
+      const roadRect = roadmap.getBoundingClientRect();
+      connectorLayer.setAttribute("width", roadRect.width);
+      connectorLayer.setAttribute("height", roadRect.height);
+      connectorLayer.setAttribute("viewBox", `0 0 ${roadRect.width} ${roadRect.height}`);
+
+      const visibleItems = items.filter(item => {
+        const card = document.getElementById(`card-${item.id}`);
+        return card && !card.classList.contains("hidden");
+      });
+
+      const selectedItem = selectedId ? items.find(x => x.id === selectedId) : null;
+      let links = [];
+
+      if (selectedItem) {
+        links = [
+          ...selectedItem.dependsOn.map(dep => [dep, selectedItem.id]),
+          ...selectedItem.enables.map(en => [selectedItem.id, en])
+        ];
+      } else {
+        visibleItems.forEach(item => {
+          item.dependsOn.forEach(dep => links.push([dep, item.id]));
+        });
+      }
+
+      links.forEach(([fromId, toId]) => {
+        const from = document.getElementById(`card-${fromId}`);
+        const to = document.getElementById(`card-${toId}`);
+        if (!from || !to || from.classList.contains("hidden") || to.classList.contains("hidden")) return;
+
+        const a = from.getBoundingClientRect();
+        const b = to.getBoundingClientRect();
+
+        const x1 = a.right - roadRect.left;
+        const y1 = a.top + a.height / 2 - roadRect.top;
+        const x2 = b.left - roadRect.left;
+        const y2 = b.top + b.height / 2 - roadRect.top;
+        const mid = Math.max(40, Math.abs(x2 - x1) * 0.45);
+        const d = `M ${x1} ${y1} C ${x1 + mid} ${y1}, ${x2 - mid} ${y2}, ${x2} ${y2}`;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", selectedItem ? "rgba(15, 23, 42, 0.42)" : "rgba(100, 116, 139, 0.18)");
+        path.setAttribute("stroke-width", selectedItem ? "2.4" : "1.4");
+        path.setAttribute("stroke-linecap", "round");
+        connectorLayer.appendChild(path);
+      });
+    }
+
+    [audienceFilter, typeFilter, phaseFilter, searchInput].forEach(el => {
+      el.addEventListener("input", () => {
+        selectedId = null;
+        document.querySelectorAll(".card").forEach(card => card.classList.remove("active", "dimmed"));
+        detailsPanel.innerHTML = `
+          <h2>Select a blocker</h2>
+          <p class="side-empty">Click any card to inspect the blocker, why it matters, its enablers, dependencies and stakeholder relevance.</p>
+        `;
+        applyFilters();
+      });
+    });
+
+    window.addEventListener("resize", drawConnectors);
+
+    renderCards();
+    applyFilters();
+  </script>
+</body>
+</html>
